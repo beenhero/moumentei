@@ -5,3 +5,5 @@ doc/api
 doc/app.svn
 config/database.yml
 config/deploy.rb
+public/homepage_features
+public/photos
