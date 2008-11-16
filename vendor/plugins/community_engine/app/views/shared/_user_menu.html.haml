@@ -1,19 +1,23 @@
-%h2="Logged in: #{link_to current_user.login, dashboard_user_path(current_user), :id => 'user-menu'}"
+%h2
+  =:logged_in.l
+  = link_to current_user.login, dashboard_user_path(current_user), :id => 'user-menu'
 #user-menu-tip
   %ul
     -if current_user.admin?
-      %li=link_to 'Admin dashboard', admin_dashboard_path
-    %li= link_to "Edit profile", edit_user_path(current_user) 
-    %li= link_to "Edit account", edit_account_user_path(current_user)          
-    %li= link_to "View profile", user_path(current_user)                  
+      %li=link_to :admin_dashboard.l, admin_dashboard_path
+    %li= link_to :edit_profile.l, edit_user_path(current_user) 
+    %li= link_to :edit_account.l, edit_account_user_path(current_user)          
+    %li= link_to :manage_posts.l, manage_user_posts_path(current_user)          
+
   %hr
   %ul
-    %li=link_to 'Blog', manage_user_posts_path(current_user)
-    %li=link_to 'Photos', user_photos_path(current_user)
-    %li=link_to 'Clippings', user_clippings_path(current_user)
-    %li=link_to 'Friends', accepted_user_friendships_path(current_user)        
+    %li= link_to :view_profile.l, user_path(current_user)                    
+    %li=link_to :blog.l, user_posts_path(current_user)
+    %li=link_to :photos.l, user_photos_path(current_user)
+    %li=link_to :clippings.l, user_clippings_path(current_user)
+    %li=link_to :friends.l, accepted_user_friendships_path(current_user)        
   %hr
-  =link_to 'Log out', logout_path
+  =link_to :log_out.l, logout_path
 
 %script{:type => "text/javascript"}
   :plain

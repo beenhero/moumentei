@@ -3,8 +3,8 @@ class SitemapController < BaseController
   caches_action :index
 
   def index
-    @users = User.find(:all, :select => 'id, login, updated_at, login_slug', :conditions => "activated_at IS NOT NULL")
-    @posts = Post.find(:all, :select => 'id, title, published_at')
+    @users = User.active.find(:all, :select => 'id, login, updated_at, login_slug')
+    @posts = Post.find(:all, :select => 'posts.id, posts.user_id, posts.title, posts.published_at, users.id, users.login_slug as user_slug', :joins => "LEFT JOIN users on users.id = posts.id")
   
     @categories = Category.find(:all)
   
@@ -12,7 +12,7 @@ class SitemapController < BaseController
       format.html {
         render :layout => 'application'
       }
-      format.xml
+      format.xml 
     end
   end
   

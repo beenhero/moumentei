@@ -1,16 +1,16 @@
 .yui-b.sidebar
   .box
-    %h3 Links
+    %h3=:links.l
     %ul.checks
-      %li=link_to 'View my blog', user_posts_path(current_user)
-      %li=link_to 'New post', new_user_post_path(current_user)    
+      %li=link_to :view_my_blog.l, user_posts_path(current_user)
+      %li=link_to :new_post.l, new_user_post_path(current_user)    
 
 #yui-main
   .yui-b
     .box
       %h3 
-        Manage Posts
-      %p Posts saved with 'draft' status won't appear in your blog until you publish them.
+        =:manage_posts.l
+      %p=:posts_saved_with_draft_status_wont_appear_in_your_blog_until_you_publish_them.l
       
 
       -if @posts.page_count > 1
@@ -19,13 +19,13 @@
       %table{:border => 0, :width => '100%'}
         %thead
           %tr
-            %th Date Created
-            %th Date Published            
-            %th Title
-            %th Category
-            %th Tags
-            %th Comments
-            %th Status
+            %th=:date_created.l
+            %th=:date_published.l            
+            %th=:title.l
+            %th=:category.l
+            %th=:tags.l
+            %th=:comments.l
+            %th=:status.l
         %tbody
           - @posts.each do |post|
             %tr            
@@ -33,8 +33,10 @@
                 %abbr{:title=>"#{post.created_at}"}= post.created_at.strftime("%Y/%m/%d")
               %td
                 %abbr{:title=>"#{post.published_at}"}= post.published_at_display
-              %td= link_to post.title, edit_user_post_path(post.user, post)
-              %td= post.category.name
-              %td= post.tags.any? ? post.tag_list : 'No tags'
+              %td
+                = link_to post.title, edit_user_post_path(post.user, post)
+                = link_to("(#{:preview.l})", user_post_path(post.user, post), :target => '_blank') unless post.is_live?
+              %td= post.category ? post.category.name : :uncategorized.l
+              %td= post.tags.any? ? post.tag_list : :no_tags.l
               %td= post.comments.count
-              %td= post.is_live? ? link_to('published', user_post_path(post.user, post)) : 'draft'
+              %td= post.is_live? ? link_to(:published.l, user_post_path(post.user, post)) : :draft.l

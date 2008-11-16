@@ -1,5 +1,5 @@
 class Event < ActiveRecord::Base
-  validates_presence_of :name
+  validates_presence_of :name, :identifier => 'validates_presence_of_name'
   validates_presence_of :start_time
   validates_presence_of :end_time
   validates_presence_of :user
@@ -9,6 +9,7 @@ class Event < ActiveRecord::Base
 
   attr_protected :user_id
   
+  named_scope :upcoming, :order => 'start_time DESC'
   
   def time_and_date
     if spans_days?

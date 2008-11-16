@@ -1,31 +1,38 @@
 class PostsController < BaseController
+
   include Viewable
   uses_tiny_mce(:options => AppConfig.default_mce_options, :only => [:new, :edit, :update, :create ])
   uses_tiny_mce(:options => AppConfig.simple_mce_options, :only => [:show])
          
   cache_sweeper :post_sweeper, :only => [:create, :update, :destroy]
+  cache_sweeper :taggable_sweeper, :only => [:create, :update, :destroy]    
   caches_action :show, :if => Proc.new{|c| c.cache_action? }
   def cache_action?
     !logged_in? && controller_name.eql?('posts')
   end  
                            
   before_filter :login_required, :only => [:new, :edit, :update, :destroy, :create, :manage]
-  before_filter :find_user, :only => [:new, :edit, :index, :show, :update_view, :manage]
+  before_filter :find_user, :only => [:new, :edit, :index, :show, :update_views, :manage]
   before_filter :require_ownership_or_moderator, :only => [:create, :edit, :update, :destroy, :manage]
 
+  skip_before_filter :verify_authenticity_token, :only => [:update_views, :send_to_friend] #called from ajax on cached pages 
+  
   def manage
-    @posts = @user.posts.find_without_published_as(:all, :page => {:current => params[:page], :size => 10}, :order => 'published_at DESC')
+    @posts = @user.posts.find_without_published_as(:all, 
+      :page => {:current => params[:page], :size => 10}, 
+      :order => 'created_at DESC')
   end
 
   def index
     @user = User.find(params[:user_id])            
     @category = Category.find_by_name(params[:category_name]) if params[:category_name]
     cond = Caboose::EZ::Condition.new
-    cond.user_id == @user.id
     if @category
       cond.append ['category_id = ?', @category.id]
     end
-    @pages, @posts = paginate :posts, :order => "published_at DESC", :conditions => cond.to_sql, :per_page => 20
+
+    @posts = @user.posts.recent.find :all, :conditions => cond.to_sql, :page => {:size => 10, :current => params[:page]}
+    
     @is_current_user = @user.eql?(current_user)
 
     @popular_posts = @user.posts.find(:all, :limit => 10, :order => "view_count DESC")
@@ -40,15 +47,12 @@ class PostsController < BaseController
            { :feed => {:title => @rss_title, :link => url_for(:controller => 'posts', :action => 'index', :user_id => @user) },
              :item => {:title => :title,
                        :description => :post,
-                       :link => :link_for_rss,
-                       :pub_date => :published_at} })        
+                       :link => Proc.new {|post| user_post_url(post.user, post)},
+                       :pub_date => :published_at} })
       }
     end
   end
   
-  def popular
-    @posts = Post.find(:all, :conditions => "published_at > '#{1.days.ago.to_s :db}'", :order => "view_count DESC")
-  end
     
   # GET /posts/1
   # GET /posts/1.xml
@@ -61,7 +65,7 @@ class PostsController < BaseController
     @is_current_user = @user.eql?(current_user)
     @comment = Comment.new(params[:comment])
 
-    @comments = @post.comments.find(:all, :limit => 20, :order => 'created_at DESC')
+    @comments = @post.comments.find(:all, :limit => 20, :order => 'created_at DESC', :include => :user)
 
     @previous = @post.previous_post
     @next = @post.next_post    
@@ -76,8 +80,8 @@ class PostsController < BaseController
   
   def update_views
     @post = Post.find(params[:id])
-    update_view_count(@post)
-    render :nothing => true
+    updated = update_view_count(@post)
+    render :text => updated ? 'updated' : 'duplicate'
   end
   
   def preview
@@ -102,12 +106,12 @@ class PostsController < BaseController
     @user = User.find(params[:user_id])
     @post = Post.new(params[:post])
     @post.user = @user
+    @post.tag_list = params[:tag_list] || ''
     respond_to do |format|
       if @post.save
         @post.create_poll(params[:poll], params[:choices]) if params[:poll]
         
-        @post.tag_with(params[:tag_list] || '') 
-        flash[:notice] = @post.category ? "Your '#{Inflector.singularize(@post.category.name)}' post was successfully created." : "Your post was successfully created."
+        flash[:notice] = @post.category ? :post_created_for_category.l_with_args(:category => @post.category.name.singularize) : "Your post was successfully created.".l
         format.html { 
           if @post.is_live?
             redirect_to @post.category ? category_path(@post.category) : user_post_path(@user, @post) 
@@ -126,7 +130,7 @@ class PostsController < BaseController
   def update
     @post = Post.find(params[:id])
     @user = @post.user
-    @post.tag_with(params[:tag_list] || '') 
+    @post.tag_list = params[:tag_list] || ''
     
     respond_to do |format|
       if @post.update_attributes(params[:post])
@@ -148,7 +152,7 @@ class PostsController < BaseController
     
     respond_to do |format|
       format.html { 
-        flash[:notice] = "Your post was deleted."
+        flash[:notice] = :your_post_was_deleted.l
         redirect_to manage_user_posts_url(@user)   
         }
     end
@@ -176,48 +180,48 @@ class PostsController < BaseController
       FROM taggings, tags 
       WHERE tags.id = taggings.tag_id GROUP BY tag_id");
 
-    @rss_title = "#{AppConfig.community_name} Popular Posts"
+    @rss_title = "#{AppConfig.community_name} "+:popular_posts.l
     @rss_url = popular_rss_url    
     respond_to do |format|
       format.html # index.rhtml
       format.rss {
         render_rss_feed_for(@posts, { :feed => {:title => @rss_title, :link => popular_url},
-          :item => {:title => :title, :link => :link_for_rss, :description => :post, :pub_date => :published_at} 
-          })        
+          :item => {:title => :title, :link => Proc.new {|post| user_post_url(post.user, post)}, :description => :post, :pub_date => :published_at}
+          })
       }
     end
   end
   
   def recent
-    @pages, @posts = paginate :posts, :order => "published_at DESC"
+    @posts = Post.recent.find :all, :page => {:current => params[:page], :size => 20}
 
     @recent_clippings = Clipping.find_recent(:limit => 15)
     @recent_photos = Photo.find_recent(:limit => 10)
     
-    @rss_title = "#{AppConfig.community_name} Recent Posts"
+    @rss_title = "#{AppConfig.community_name} "+:recent_posts.l
     @rss_url = recent_rss_url
     respond_to do |format|
       format.html 
       format.rss {
         render_rss_feed_for(@posts, { :feed => {:title => @rss_title, :link => recent_url},
-          :item => {:title => :title, :link => :link_for_rss, :description => :post, :pub_date => :published_at} 
-          })        
+          :item => {:title => :title, :link => Proc.new {|post| user_post_url(post.user, post)}, :description => :post, :pub_date => :published_at}
+          })
       }
     end    
   end
   
   def featured
-    @pages, @posts = paginate :posts, :order => "posts.published_at DESC", :conditions => ["users.featured_writer = ?", true], :include => :user
-    @featured_writers = User.find_featured    
+    @posts = Post.by_featured_writers.recent.find(:all, :page => {:current => params[:page]})
+    @featured_writers = User.featured
         
-    @rss_title = "#{AppConfig.community_name} Featured Posts"
+    @rss_title = "#{AppConfig.community_name} "+:featured_posts.l
     @rss_url = featured_rss_url
     respond_to do |format|
       format.html 
       format.rss {
         render_rss_feed_for(@posts, { :feed => {:title => @rss_title, :link => recent_url},
-          :item => {:title => :title, :link => :link_for_rss, :description => :post, :pub_date => :published_at} 
-          })        
+          :item => {:title => :title, :link => Proc.new {|post| user_post_url(post.user, post)}, :description => :post, :pub_date => :published_at}
+          })
       }
     end    
   end  
@@ -229,6 +233,8 @@ class PostsController < BaseController
   rescue ActiveRecord::RecordNotFound
     render :partial => "/categories/tips", :locals => {:category => nil}    
   end
+  
+  private
   
   def require_ownership_or_moderator
     @user ||= User.find(params[:user_id] || params[:id] )

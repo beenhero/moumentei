@@ -1,10 +1,11 @@
 require File.dirname(__FILE__) + '/../test_helper'
-require 'comments_controller'
+# require 'comments_controller'
 
 # Re-raise errors caught by the controller.
-class CommentsController; def rescue_action(e) raise e end; end
+# class CommentsController; def rescue_action(e) raise e end; end
 
-class CommentsControllerTest < Test::Unit::TestCase
+class CommentsControllerTest < ActionController::TestCase
+# class CommentsControllerTest < Test::Unit::TestCase
   fixtures :users, :photos, :posts, :comments, :roles
 
   def setup
@@ -12,7 +13,7 @@ class CommentsControllerTest < Test::Unit::TestCase
     @request    = ActionController::TestRequest.new
     @response   = ActionController::TestResponse.new
   end
-
+  
   def test_should_create_user_comment_with_notification
     login_as :aaron
     assert_difference Comment, :count, 1 do
@@ -134,7 +135,7 @@ class CommentsControllerTest < Test::Unit::TestCase
   
   def test_should_show_comments_index_rss_if_logged_in
     login_as :quentin
-    get :index, :commentable_type => 'user', :commentable_id => users(:aaron).to_param, :_format => :rss
+    get :index, :commentable_type => 'user', :commentable_id => users(:aaron).to_param, :format => 'rss'
     assert !assigns(:comments).empty?
     assert_response :success
   end

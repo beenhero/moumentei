@@ -9,7 +9,7 @@ class EventsController < BaseController
 
   def index
     @is_admin_user = (current_user && current_user.admin?)
-    @pages, @events = paginate :events, :order => "start_time DESC"
+    @events = Event.upcoming.find(:all, :page => {:current => params[:page]})
   end
 
   def new
@@ -26,7 +26,7 @@ class EventsController < BaseController
     
     respond_to do |format|
       if @event.save
-        flash[:notice] = 'Event was successfully created.'
+        flash[:notice] = :event_was_successfully_created.l
         
         format.html { redirect_to events_path }
       else

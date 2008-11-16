@@ -3,29 +3,33 @@ class SbPostsController < BaseController
   before_filter :login_required, :except => [:index, :search, :show, :monitored]
   uses_tiny_mce(:options => AppConfig.default_mce_options, :only => [:edit, :update])  
 
-  @@query_options = { :per_page => 25, :select => 'sb_posts.*, topics.title as topic_title, forums.name as forum_name', :joins => 'inner join topics on sb_posts.topic_id = topics.id inner join forums on topics.forum_id = forums.id', :order => 'sb_posts.created_at desc' }
 
   def index
     conditions = []
     [:user_id, :forum_id].each { |attr| conditions << SbPost.send(:sanitize_sql, ["sb_posts.#{attr} = ?", params[attr]]) if params[attr] }
     conditions = conditions.any? ? conditions.collect { |c| "(#{c})" }.join(' AND ') : nil
-    @post_pages, @posts = paginate(:sb_posts, @@query_options.merge(:conditions => conditions))
+
+    @posts = SbPost.with_query_options.find :all, :conditions => conditions, :page => {:current => params[:page]}
+    
     @users = User.find(:all, :select => 'distinct *', :conditions => ['id in (?)', @posts.collect(&:user_id).uniq]).index_by(&:id)
     render_posts_or_xml
   end
 
   def search
     conditions = params[:q].blank? ? nil : SbPost.send(:sanitize_sql, ['LOWER(sb_posts.body) LIKE ?', "%#{params[:q]}%"])
-    @post_pages, @posts = paginate(:sb_posts, @@query_options.merge(:conditions => conditions))
+    
+    @posts = SbPost.with_query_options.find :all, :conditions => conditions, :page => {:current => params[:page]}
+
     @users = User.find(:all, :select => 'distinct *', :conditions => ['id in (?)', @posts.collect(&:user_id).uniq]).index_by(&:id)
     render_posts_or_xml :index
   end
 
   def monitored
-    @user = User.find params[:user_id]
-    options = @@query_options.merge(:conditions => ['monitorships.user_id = ? and sb_posts.user_id != ?', params[:user_id], @user.id])
-    options[:joins] += ' inner join monitorships on monitorships.topic_id = topics.id'
-    @post_pages, @posts = paginate(:sb_posts, options)
+    @user = User.find params[:user_id]    
+    @posts = SbPost.with_query_options.find(:all, 
+      :joins => ' INNER JOIN monitorships ON monitorships.topic_id = topics.id', 
+      :conditions  => ['monitorships.user_id = ? AND sb_posts.user_id != ?', params[:user_id], @user.id],
+      :page => {:current => params[:page]})
     render_posts_or_xml
   end
 
@@ -47,11 +51,11 @@ class SbPostsController < BaseController
     if @topic.locked?
       respond_to do |format|
         format.html do
-          flash[:notice] = 'This topic is locked.'
+          flash[:notice] = :this_topic_is_locked.l
           redirect_to(forum_topic_path(:forum_id => params[:forum_id], :id => params[:topic_id]))
         end
         format.xml do
-          render :text => 'This topic is locked.', :status => 400
+          render :text => :this_topic_is_locked.l, :status => 400
         end
       end
       return
@@ -67,7 +71,7 @@ class SbPostsController < BaseController
       format.xml { head :created, :location => formatted_sb_user_post_url(:forum_id => params[:forum_id], :topic_id => params[:topic_id], :id => @post, :format => :xml) }
     end
   rescue ActiveRecord::RecordInvalid
-    flash[:bad_reply] = 'Please post something at least...'
+    flash[:bad_reply] = :please_post_something_at_least.l
     respond_to do |format|
       format.html do
         redirect_to forum_topic_path(:forum_id => params[:forum_id], :id => params[:topic_id], :anchor => 'reply-form', :page => params[:page] || '1')
@@ -87,7 +91,7 @@ class SbPostsController < BaseController
     @post.attributes = params[:post]
     @post.save!
   rescue ActiveRecord::RecordInvalid
-    flash[:bad_reply] = 'An error occurred'
+    flash[:bad_reply] = :an_error_occurred.l
   ensure
     respond_to do |format|
       format.html do
@@ -100,7 +104,7 @@ class SbPostsController < BaseController
 
   def destroy
     @post.destroy
-    flash[:notice] = "Post: '#{CGI::escapeHTML @post.topic.title}' was deleted."
+    flash[:notice] = :sb_post_was_deleted.l_with_args(:title => CGI::escapeHTML(@post.topic.title))
     # check for posts_count == 1 because its cached and counting the currently deleted post
     @post.topic.destroy and redirect_to forum_path(params[:forum_id]) if @post.topic.sb_posts_count == 1
     respond_to do |format|
