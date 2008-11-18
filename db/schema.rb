@@ -9,42 +9,45 @@
 #
 # It's strongly recommended to check this file into your version control system.
 
-ActiveRecord::Schema.define(:version => 20080616051453) do
+ActiveRecord::Schema.define(:version => 20081116151852) do
 
   create_table "activities", :force => true do |t|
-    t.integer  "user_id",    :limit => 10
+    t.integer  "user_id"
     t.string   "action",     :limit => 50
-    t.integer  "item_id",    :limit => 10
+    t.integer  "item_id"
     t.string   "item_type"
     t.datetime "created_at"
   end
 
+  add_index "activities", ["created_at"], :name => "index_activities_on_created_at"
+  add_index "activities", ["user_id"], :name => "index_activities_on_user_id"
+
   create_table "ads", :force => true do |t|
     t.string   "name"
     t.text     "html"
-    t.integer  "frequency",        :limit => 11
+    t.integer  "frequency"
     t.datetime "created_at"
     t.datetime "updated_at"
     t.datetime "start_date"
     t.datetime "end_date"
     t.string   "location"
-    t.boolean  "published",                      :default => false
-    t.boolean  "time_constrained",               :default => false
-    t.string   "audience",                       :default => "all"
+    t.boolean  "published",        :default => false
+    t.boolean  "time_constrained", :default => false
+    t.string   "audience",         :default => "all"
   end
 
   create_table "assets", :force => true do |t|
     t.string   "filename"
-    t.integer  "width",           :limit => 11
-    t.integer  "height",          :limit => 11
+    t.integer  "width"
+    t.integer  "height"
     t.string   "content_type"
-    t.integer  "size",            :limit => 11
+    t.integer  "size"
     t.string   "attachable_type"
-    t.integer  "attachable_id",   :limit => 11
+    t.integer  "attachable_id"
     t.datetime "updated_at"
     t.datetime "created_at"
     t.string   "thumbnail"
-    t.integer  "parent_id",       :limit => 11
+    t.integer  "parent_id"
   end
 
   create_table "categories", :force => true do |t|
@@ -55,29 +58,35 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
   end
 
   create_table "choices", :force => true do |t|
-    t.integer "poll_id",     :limit => 11
+    t.integer "poll_id"
     t.string  "description"
-    t.integer "votes_count", :limit => 11, :default => 0
+    t.integer "votes_count", :default => 0
   end
 
   create_table "clippings", :force => true do |t|
     t.string   "url"
-    t.integer  "user_id",         :limit => 11
+    t.integer  "user_id"
     t.string   "image_url"
     t.string   "description"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "favorited_count", :limit => 11, :default => 0
+    t.integer  "favorited_count", :default => 0
   end
+
+  add_index "clippings", ["created_at"], :name => "index_clippings_on_created_at"
 
   create_table "comments", :force => true do |t|
     t.string   "title",            :limit => 50, :default => ""
-    t.text     "comment"
     t.datetime "created_at",                                     :null => false
-    t.integer  "commentable_id",   :limit => 11, :default => 0,  :null => false
+    t.integer  "commentable_id",                 :default => 0,  :null => false
     t.string   "commentable_type", :limit => 15, :default => "", :null => false
-    t.integer  "user_id",          :limit => 11, :default => 0,  :null => false
-    t.integer  "recipient_id",     :limit => 11
+    t.integer  "user_id",                        :default => 0,  :null => false
+    t.integer  "recipient_id"
+    t.text     "comment"
+    t.string   "author_name"
+    t.string   "author_email"
+    t.string   "author_url"
+    t.string   "author_ip"
   end
 
   add_index "comments", ["user_id"], :name => "fk_comments_user"
@@ -106,11 +115,11 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
     t.string   "name"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_id",       :limit => 11
+    t.integer  "user_id"
     t.datetime "start_time"
     t.datetime "end_time"
     t.text     "description"
-    t.integer  "metro_area_id", :limit => 11
+    t.integer  "metro_area_id"
     t.string   "location"
   end
 
@@ -118,9 +127,9 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
     t.datetime "updated_at"
     t.datetime "created_at"
     t.string   "favoritable_type"
-    t.integer  "favoritable_id",   :limit => 11
-    t.integer  "user_id",          :limit => 11
-    t.string   "ip_address",                     :default => ""
+    t.integer  "favoritable_id"
+    t.integer  "user_id"
+    t.string   "ip_address",       :default => ""
   end
 
   add_index "favorites", ["user_id"], :name => "fk_favorites_user"
@@ -128,12 +137,12 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
   create_table "forums", :force => true do |t|
     t.string  "name"
     t.string  "description"
-    t.integer "topics_count",     :limit => 11, :default => 0
-    t.integer "sb_posts_count",   :limit => 11, :default => 0
-    t.integer "position",         :limit => 11
+    t.integer "topics_count",     :default => 0
+    t.integer "sb_posts_count",   :default => 0
+    t.integer "position"
     t.text    "description_html"
     t.string  "owner_type"
-    t.integer "owner_id",         :limit => 11
+    t.integer "owner_id"
   end
 
   create_table "friendship_statuses", :force => true do |t|
@@ -141,11 +150,11 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
   end
 
   create_table "friendships", :force => true do |t|
-    t.integer  "friend_id",            :limit => 11
-    t.integer  "user_id",              :limit => 11
-    t.boolean  "initiator",                          :default => false
+    t.integer  "friend_id"
+    t.integer  "user_id"
+    t.boolean  "initiator",            :default => false
     t.datetime "created_at"
-    t.integer  "friendship_status_id", :limit => 11
+    t.integer  "friendship_status_id"
   end
 
   add_index "friendships", ["user_id"], :name => "index_friendships_on_user_id"
@@ -159,11 +168,11 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
     t.datetime "updated_at"
     t.string   "content_type"
     t.string   "filename"
-    t.integer  "parent_id",    :limit => 11
+    t.integer  "parent_id"
     t.string   "thumbnail"
-    t.integer  "size",         :limit => 11
-    t.integer  "width",        :limit => 11
-    t.integer  "height",       :limit => 11
+    t.integer  "size"
+    t.integer  "width"
+    t.integer  "height"
   end
 
   create_table "invitations", :force => true do |t|
@@ -173,29 +182,41 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
     t.datetime "created_at"
   end
 
+  create_table "messages", :force => true do |t|
+    t.integer  "sender_id"
+    t.integer  "recipient_id"
+    t.boolean  "sender_deleted",    :default => false
+    t.boolean  "recipient_deleted", :default => false
+    t.string   "subject"
+    t.text     "body"
+    t.datetime "read_at"
+    t.datetime "created_at"
+    t.datetime "updated_at"
+  end
+
   create_table "metro_areas", :force => true do |t|
     t.string  "name"
-    t.integer "state_id",    :limit => 11
-    t.integer "country_id",  :limit => 11
-    t.integer "users_count", :limit => 11, :default => 0
+    t.integer "state_id"
+    t.integer "country_id"
+    t.integer "users_count", :default => 0
   end
 
   create_table "moderatorships", :force => true do |t|
-    t.integer "forum_id", :limit => 11
-    t.integer "user_id",  :limit => 11
+    t.integer "forum_id"
+    t.integer "user_id"
   end
 
   add_index "moderatorships", ["forum_id"], :name => "index_moderatorships_on_forum_id"
 
   create_table "monitorships", :force => true do |t|
-    t.integer "topic_id", :limit => 11
-    t.integer "user_id",  :limit => 11
-    t.boolean "active",                 :default => true
+    t.integer "topic_id"
+    t.integer "user_id"
+    t.boolean "active",   :default => true
   end
 
   create_table "offerings", :force => true do |t|
-    t.integer "skill_id", :limit => 11
-    t.integer "user_id",  :limit => 11
+    t.integer "skill_id"
+    t.integer "user_id"
   end
 
   create_table "photos", :force => true do |t|
@@ -203,25 +224,29 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
     t.text     "description"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "user_id",      :limit => 11
+    t.integer  "user_id"
     t.string   "content_type"
     t.string   "filename"
-    t.integer  "size",         :limit => 11
-    t.integer  "parent_id",    :limit => 11
+    t.integer  "size"
+    t.integer  "parent_id"
     t.string   "thumbnail"
-    t.integer  "width",        :limit => 11
-    t.integer  "height",       :limit => 11
+    t.integer  "width"
+    t.integer  "height"
   end
 
   add_index "photos", ["parent_id"], :name => "index_photos_on_parent_id"
+  add_index "photos", ["created_at"], :name => "index_photos_on_created_at"
 
   create_table "polls", :force => true do |t|
     t.string   "question"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "post_id",     :limit => 11
-    t.integer  "votes_count", :limit => 11, :default => 0
+    t.integer  "post_id"
+    t.integer  "votes_count", :default => 0
   end
+
+  add_index "polls", ["created_at"], :name => "index_polls_on_created_at"
+  add_index "polls", ["post_id"], :name => "index_polls_on_post_id"
 
   create_table "posts", :force => true do |t|
     t.datetime "created_at"
@@ -229,34 +254,37 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
     t.text     "raw_post"
     t.text     "post"
     t.string   "title"
-    t.integer  "category_id",     :limit => 11
-    t.integer  "user_id",         :limit => 11
-    t.integer  "view_count",      :limit => 11, :default => 0
-    t.integer  "contest_id",      :limit => 11
-    t.integer  "emailed_count",   :limit => 11, :default => 0
-    t.integer  "favorited_count", :limit => 11, :default => 0
+    t.integer  "category_id"
+    t.integer  "user_id"
+    t.integer  "view_count",                    :default => 0
+    t.integer  "contest_id"
+    t.integer  "emailed_count",                 :default => 0
+    t.integer  "favorited_count",               :default => 0
     t.string   "published_as",    :limit => 16, :default => "draft"
     t.datetime "published_at"
   end
 
   add_index "posts", ["category_id"], :name => "index_posts_on_category_id"
+  add_index "posts", ["published_at"], :name => "index_posts_on_published_at"
+  add_index "posts", ["published_as"], :name => "index_posts_on_published_as"
+  add_index "posts", ["user_id"], :name => "index_posts_on_user_id"
 
   create_table "roles", :force => true do |t|
     t.string "name"
   end
 
   create_table "sb_posts", :force => true do |t|
-    t.integer  "user_id",    :limit => 11
-    t.integer  "topic_id",   :limit => 11
+    t.integer  "user_id"
+    t.integer  "topic_id"
     t.text     "body"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "forum_id",   :limit => 11
+    t.integer  "forum_id"
     t.text     "body_html"
   end
 
-  add_index "sb_posts", ["forum_id", "created_at"], :name => "index_posts_on_forum_id"
-  add_index "sb_posts", ["user_id", "created_at"], :name => "index_posts_on_user_id"
+  add_index "sb_posts", ["forum_id", "created_at"], :name => "index_sb_posts_on_forum_id"
+  add_index "sb_posts", ["user_id", "created_at"], :name => "index_sb_posts_on_user_id"
 
   create_table "sessions", :force => true do |t|
     t.string   "sessid"
@@ -276,32 +304,35 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
   end
 
   create_table "taggings", :force => true do |t|
-    t.integer "tag_id",        :limit => 11
-    t.integer "taggable_id",   :limit => 11
+    t.integer "tag_id"
+    t.integer "taggable_id"
     t.string  "taggable_type"
   end
 
   add_index "taggings", ["tag_id"], :name => "index_taggings_on_tag_id"
   add_index "taggings", ["taggable_type"], :name => "index_taggings_on_taggable_type"
   add_index "taggings", ["taggable_id"], :name => "index_taggings_on_taggable_id"
+  add_index "taggings", ["taggable_id", "taggable_type"], :name => "index_taggings_on_taggable_id_and_taggable_type"
 
   create_table "tags", :force => true do |t|
     t.string "name"
   end
 
+  add_index "tags", ["name"], :name => "index_tags_on_name"
+
   create_table "topics", :force => true do |t|
-    t.integer  "forum_id",       :limit => 11
-    t.integer  "user_id",        :limit => 11
+    t.integer  "forum_id"
+    t.integer  "user_id"
     t.string   "title"
     t.datetime "created_at"
     t.datetime "updated_at"
-    t.integer  "hits",           :limit => 11, :default => 0
-    t.integer  "sticky",         :limit => 11, :default => 0
-    t.integer  "sb_posts_count", :limit => 11, :default => 0
+    t.integer  "hits",           :default => 0
+    t.integer  "sticky",         :default => 0
+    t.integer  "sb_posts_count", :default => 0
     t.datetime "replied_at"
-    t.boolean  "locked",                       :default => false
-    t.integer  "replied_by",     :limit => 11
-    t.integer  "last_post_id",   :limit => 11
+    t.boolean  "locked",         :default => false
+    t.integer  "replied_by"
+    t.integer  "last_post_id"
   end
 
   add_index "topics", ["forum_id"], :name => "index_topics_on_forum_id"
@@ -312,7 +343,7 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
     t.string   "login"
     t.string   "email"
     t.text     "description"
-    t.integer  "avatar_id",                 :limit => 11
+    t.integer  "avatar_id"
     t.string   "crypted_password",          :limit => 40
     t.string   "salt",                      :limit => 40
     t.datetime "created_at"
@@ -320,27 +351,27 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
     t.string   "remember_token"
     t.datetime "remember_token_expires_at"
     t.text     "stylesheet"
-    t.integer  "view_count",                :limit => 11, :default => 0
+    t.integer  "view_count",                              :default => 0
     t.boolean  "vendor",                                  :default => false
     t.string   "activation_code",           :limit => 40
     t.datetime "activated_at"
-    t.integer  "state_id",                  :limit => 11
-    t.integer  "metro_area_id",             :limit => 11
+    t.integer  "state_id"
+    t.integer  "metro_area_id"
     t.string   "login_slug"
     t.boolean  "notify_comments",                         :default => true
     t.boolean  "notify_friend_requests",                  :default => true
     t.boolean  "notify_community_news",                   :default => true
-    t.integer  "country_id",                :limit => 11
+    t.integer  "country_id"
     t.boolean  "featured_writer",                         :default => false
     t.datetime "last_login_at"
     t.string   "zip"
     t.date     "birthday"
     t.string   "gender"
     t.boolean  "profile_public",                          :default => true
-    t.integer  "activities_count",          :limit => 11, :default => 0
-    t.integer  "sb_posts_count",            :limit => 11, :default => 0
+    t.integer  "activities_count",                        :default => 0
+    t.integer  "sb_posts_count",                          :default => 0
     t.datetime "sb_last_seen_at"
-    t.integer  "role_id",                   :limit => 11
+    t.integer  "role_id"
   end
 
   add_index "users", ["avatar_id"], :name => "index_users_on_avatar_id"
@@ -348,11 +379,12 @@ ActiveRecord::Schema.define(:version => 20080616051453) do
   add_index "users", ["activated_at"], :name => "index_users_on_activated_at"
   add_index "users", ["vendor"], :name => "index_users_on_vendor"
   add_index "users", ["login_slug"], :name => "index_users_on_login_slug"
+  add_index "users", ["created_at"], :name => "index_users_on_created_at"
 
   create_table "votes", :force => true do |t|
     t.string   "user_id"
-    t.integer  "poll_id",    :limit => 11
-    t.integer  "choice_id",  :limit => 11
+    t.integer  "poll_id"
+    t.integer  "choice_id"
     t.datetime "created_at"
   end
 
