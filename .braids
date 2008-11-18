@@ -1,8 +1,2 @@
---- 
-globalite: 
-  squashed: true
-  url: git://github.com/mattetti/globalite.git
-  branch: master
-  type: git
-  revision: 3525504a30645b6234361bc6c92f5b0c77c6d5f7
-  remote: braid/globalite
+--- {}
+
