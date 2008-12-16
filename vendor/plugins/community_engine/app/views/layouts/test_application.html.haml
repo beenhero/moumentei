@@ -1,0 +1,61 @@
+!!!
+%html
+  %head
+    %link{:rel=>"shortcut icon", :href=>"/favicon.ico"}
+    %meta{"http-equiv"=>"Content-Type", :content=>"text/html;charset=utf-8"}
+
+    %title= page_title
+    -if @meta
+      -@meta.each do |key|
+        %meta{:name=>key[0], :content=>key[1]}
+  
+    = render :partial => "shared/scripts_and_styles"
+    - if @rss_title && @rss_url
+      = auto_discovery_link_tag(:rss, @rss_url, {:title => @rss_title})
+    /[if IE 7]
+      = stylesheet_link_tag 'ie7', :media => 'screen', :plugin => "community_engine"
+    
+  %body
+    #fullheightcontainer
+      #centerfill
+      #leftfill
+      #rightfill
+      #wrapper
+        #outer
+          #float-wrap.floatcontainer
+            #center
+              #clearheadercenter
+              #container-center
+                寻找游戏，寻找攻略，寻找同好，就在这里
+                %br/
+                %input/
+                %input{'type' => "submit", :value => "搜索"}/
+                %br/
+                %br/
+              #clearfootercenter
+            #left
+              #clearheaderleft
+              #container-left
+                %img{:src => "http://otho.douban.com/spic/e10583.jpg"}/
+                %b 黑衣大葛格
+                男，已婚
+                广东，深圳
+
+                个人资料[编辑]
+                迷你blog<br />
+                相册<br />
+
+                %b 应用程序
+                游戏
+                投票
+                FEED
+
+              #clearfooterleft
+    #footer
+      #subfooter1 冇问题  | 关于我们 | 官方blog | 条款 | 隐私 | 帮助 
+    #header
+      #header-inner
+        #header-right
+          %b 2simple@gmail.com
+          设置 退出
+        LOGO&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; 首页 个人主页 好友 小纸条
