@@ -1,520 +1,213 @@
-@charset "UTF-8";
-/**
- * "Yet Another Multicolumn Layout" - (X)HTML/CSS framework
- * (en) stylesheet for screen layout
- * (de) Stylesheet für das Bildschirm-Layout
- *
- * @creator     YAML Builder V1.0.3b (http://builder.yaml.de)
- * @file        basemod.css
- */
-
-@media screen, projection
-{
-  /*-------------------------------------------------------------------------*/
-
-  /* (en) Marginal areas & page background */
-  /* (de) Randbereiche & Seitenhintergrund */
-  body { background: #fff; padding: 0; }
-
-  /* Layout Alignment | Layout-Ausrichtung */
-  #page_margins { margin: 0 auto; }
-
-  /* Layout Properties | Layout-Eigenschaften */
-  #page_margins { width: auto;  min-width: 960px; max-width: 1900px; background: #fff; }
-  #page { padding: 0; }
-  #header { padding: 5px; color: #000; background: #999; }
-  #main { margin: 10px 0; background: #fff; }
-  #footer { padding: 10px 20px; color:#666; background: #f9f9f9; border-top: 5px #efefef solid;text-align: center }
-
-  /*-------------------------------------------------------------------------*/
-
-  /**
-   * (en) Formatting content container
-   * (de) Formatierung der Inhalts-Container
-   *
-   */
-
-  #col1 { float: left; width: 180px;  margin:0 }
-  #col2 { float: right; width: 200px;  margin:0 }
-  #col3 { width: auto; margin: 0 200px 0 180px}
-  #col1_content { padding: 0 10px 0 5px }
-  #col1_content ul {list-style-image:none;list-style-position:outside;list-style-type:none;margin:0;padding:0;}
-  #col1_content ul li {height:12px;line-height:12px;padding:10px 0 0 0;}
-  #col2_content { padding: 0 20px 0 10px }
-  #col3_content { padding: 0 10px }
-  .c50r { text-align: right }
-	
-  /*-------------------------------------------------------------------------*/
+html,body,p,div,img,h1,h2,h3,h4,li,ul,ol,dl,dd,dt,form, {
+  margin: 0;
+  padding: 0;
+  border: 0;
+  border-collapse: separate;
+  border-spacing: 0;
 }
 
-@charset "UTF-8";
-/**
- * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
- *
- * (en) YAML core stylesheet
- * (de) YAML Basis-Stylesheet
- *
- * Don't make any changes in this file!
- * Your changes should be placed in any css-file in your own stylesheet folder.
- *
- * @copyright       Copyright 2005-2008, Dirk Jesse
- * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
- *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
- * @link            http://www.yaml.de
- * @package         yaml
- * @version         3.0.6
- * @revision        $Revision: 202 $
- * @lastmodified    $Date: 2008-06-07 14:29:18 +0200 (Sa, 07 Jun 2008) $
- */
+html, body { height: 100%;}
 
-@media all
-{
- /*------------------------------------------------------------------------------------------------------*/
+body {min-width: 770px;} /*** Content Minmum Width, not used by IE5/6, or early versions of Safari ***/
 
- /**
-  * @section browser reset
-  * @see     http://www.yaml.de/en/documentation/css-components/base-stylesheet.html
-  */
-
-  /* (en) Global reset of paddings and margins for all HTML elements */
-  /* (de) Globales Zurücksetzen der Innen- und Außenabstände für alle HTML-Elemente */
-  * { margin:0; padding: 0; }
-
-  /* (en) Correction: margin/padding reset caused too small select boxes. */
-  /* (de) Korrektur: Das Zurücksetzen der Abstände verursacht zu kleine Selectboxen. */
-  option { padding-left: 0.4em; }
-
- /**
-  * (en) Global fix of the Italics bugs in IE 5.x and IE 6
-  * (de) Globale Korrektur des Italics Bugs des IE 5.x und IE 6
-  *
-  * @bugfix
-  * @affected   IE 5.x/Win, IE6
-  * @css-for    IE 5.x/Win, IE6
-  * @valid      yes
-  */
-  * html body * { overflow:visible; }
-  * html iframe, * html frame { overflow:auto; }
-  * html frameset { overflow:hidden; }
-
-  /* (en) Forcing vertical scrollbars in Netscape, Firefox and Safari browsers */
-  /* (de) Erzwingen vertikaler Scrollbalken in Netscape, Firefox und Safari Browsern */
-  html { height: 100%; margin-bottom: 1px; }
-  body {
-    /* (en) Fix for rounding errors when scaling font sizes in older versions of Opera browser */
-    /* (de) Beseitigung von Rundungsfehler beim Skalieren von Schriftgrößen in älteren Opera Versionen */
-    font-size: 100.01%;
-
-    /* (en) Standard values for colors and text alignment */
-    /* (de) Vorgabe der Standardfarben und Textausrichtung */
-    color: #000;
-    background: #fff;
-    text-align: left;
-  }
-
-  /* (en) Clear borders for <fieldset> and <img> elements */
-  /* (de) Rahmen für <fieldset> und <img> Elemente löschen */
-  fieldset, img { border: 0 solid; }
-
-  /* (en) new standard values for lists, blockquote and cite */
-  /* (de) Neue Standardwerte für Listen & Zitate */
-  ul, ol, dl { margin: 0 0 1em 1em }
-  li { margin-left: 1.5em; line-height: 1.5em; }
-
-  dt { font-weight: bold; }
-  dd { margin: 0 0 1em 2em; }
-
-  blockquote { margin: 0 0 1em 1.5em; }
-
- /*------------------------------------------------------------------------------------------------------*/
-
- /**
-  * @section base layout | Basis Layout
-  * @see     http://www.yaml.de/en/documentation/css-components/base-stylesheet.html
-  *
-  * |-------------------------------|
-  * | #header                       |
-  * |-------------------------------|
-  * | #col1   | #col3     | #col2   |
-  * | 200 px  | flexible  | 200px   |
-  * |-------------------------------|
-  * | #footer                       |
-  * |-------------------------------|
-  */
-
-  #header { position:relative; }
-
-  /* (en) Text Alignment for #topnav content */
-  /* (de) Textausrichtung für #topnav Inhalte */
-  #topnav { text-align: right; } 
-
-  /* (en) Absolute positioning only within #header */
-  /* (de) Absolute Positionierung erfolgt nur innerhalb von #header */
-  #header #topnav {
-    position:absolute;
-    top: 10px;
-    right: 10px;
-  }
-
-  /* (en) Backup for correct positioning */
-  /* (de) Absicherung korrekte Positionierung */
-  #header, #nav, #main, #footer { clear:both; }
-
-  /* (en/de) Standard: 200 Pixel */
-  #col1 { float: left; width: 200px }
-  /* (en/de) Standard: 200 Pixel */
-  #col2 { float:right; width: 200px }
-  /* (en) Standard: center column with flexible width */
-  /* (de) Standard: Flexible mittlere Spalte */
-  #col3 { width:auto; margin: 0 200px }
-
-  /* (en) Preparation for absolute positioning within content columns */
-  /* (de) Vorbereitung für absolute Positionierungen innerhalb der Inhaltsspalten */
-  #col1_content, #col2_content, #col3_content { position:relative; }
-
- /*------------------------------------------------------------------------------------------------------*/
-
- /**
-  * @section generic classes for layout switching | Generische Klassen zur Layoutumschaltung
-  * @see     http://www.yaml.de/en/documentation/css-components/base-stylesheet.html
-  *
-  * .hidecol1 -> 2-column-layout (using #col2 and #col3)
-  * .hidecol2 -> 2-column-layout (using #col1 and #col3)
-  * .hideboth -> single-column-layout (using #col3)
-  */
-
-  .hideboth #col3 { margin-left: 0; margin-right: 0; }
-  .hidecol1 #col3 { margin-left: 0; margin-right: 200px; }
-  .hidecol2 #col3 { margin-left: 200px; margin-right: 0; }
-
-  .hideboth #col1, .hideboth #col2, .hidecol1 #col1, .hidecol2 #col2 { display:none; }
-
- /*------------------------------------------------------------------------------------------------------*/
-
- /**
-  * @section clearing methods
-  * @see     http://yaml.de/en/documentation/basics/general.html
-  */
-
-  /* (en) clearfix method for clearing floats */
-  /* (de) Clearfix-Methode zum Clearen der Float-Umgebungen */
-   .clearfix:after {
-    content: ".";
-    display: block;
-    height: 0;
-    clear: both;
-    visibility: hidden;
-  }
-
-  /* (en) essential for Safari browser !! */
-  /* (de) Diese Angabe benötigt der Safari-Browser zwingend !! */
-  .clearfix { display: block; }
-
-  /* (en) overflow method for clearing floats */
-  /* (de) Overflow-Methode zum Clearen der Float-Umgebungen */
-  .floatbox { overflow:hidden; }
-
-  /* (en) IE-Clearing: Only used in Internet Explorer, switched on in iehacks.css */
-  /* (de) IE-Clearing: Benötigt nur der Internet Explorer und über iehacks.css zugeschaltet */
-  #ie_clearing { display: none; }
-
- /*------------------------------------------------------------------------------------------------------*/
-
- /**
-  * @section subtemplates
-  * @see     http://www.yaml.de/en/documentation/practice/subtemplates.html
-  */
-
-  .subcolumns { width: 100%; overflow:hidden; }
-
-  /* (en) alternative class for optional support of old Mozilla/Netscape browers */
-  /* (de) Alternative Klasse zur optionalen Unterstützung alter Mozilla/Netscape-Brower */
-  .subcolumns_oldgecko { width: 100%; float:left; }
-
-  .c50l, .c25l, .c33l, .c38l, .c66l, .c75l, .c62l {float: left; }
-  .c50r, .c25r, .c33r, .c38r, .c66r, .c75r, .c62r {float: right; margin-left: -5px; }
-
-  .c25l, .c25r { width: 25%; }
-  .c33l, .c33r { width: 33.333%; }
-  .c50l, .c50r { width: 50%; }
-  .c66l, .c66r { width: 66.666%; }
-  .c75l, .c75r { width: 75%; }
-  .c38l, .c38r { width: 38.2%; }
-  .c62l, .c62r { width: 61.8%; }
-
-  .subc  { padding: 0 0.5em; }
-  .subcl { padding: 0 1em 0 0; }
-  .subcr { padding: 0 0 0 1em; }
-
- /*------------------------------------------------------------------------------------------------------*/
-
- /**
-  * @section hidden elements | Versteckte Elemente
-  * @see     http://www.yaml.de/en/documentation/basics/skip-links.html
-  *
-  * (en) skip links and hidden content
-  * (de) Skip-Links und versteckte Inhalte
-  */
-
-  /* (en) classes for invisible elements in the base layout */
-  /* (de) Klassen für unsichtbare Elemente im Basislayout */
-  .skip, .hideme, .print {
-    position: absolute;
-    top: -1000em;
-    left: -1000em;
-    height: 1px;
-    width: 1px;
-  }
-
-  /* (en) make skip links visible when using tab navigation */
-  /* (de) Skip-Links für Tab-Navigation sichtbar schalten */
-  .skip:focus, .skip:active {
-    position: static;
-    top: 0;
-    left: 0;
-    height: auto;
-    width: auto;
-  }
+input, select {
+  margin: 0;
+  padding: 0;
 }
 
-@charset "UTF-8";
-/**
- * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
- *
- * (en) Template for designing a screen layout
- * (de) Gestaltungsvorlage für die Erstellung eines Screenlayouts
- *
- * @copyright       Copyright 2005-2008, Dirk Jesse
- * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
- *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
- * @link            http://www.yaml.de
- * @package         yaml
- * @version         3.0.6
- * @revision        $Revision: 202 $
- * @lastmodified    $Date: 2008-06-07 14:29:18 +0200 (Sa, 07 Jun 2008) $
- */
+label {cursor: pointer;
+display: block;}
 
-@media screen, projection
-{
- /*------------------------------------------------------------------------------------------------------*/
-
- /**
-  * Design of the Basic Layout | Gestaltung des YAML Basis-Layouts
-  *
-  * @section layout-basics
-  */
-
-  /* Page margins and background | Randbereiche & Seitenhintergrund */
-  body {  }
-
-  /* Layout: Width, Background, Border | Layout: Breite, Hintergrund, Rahmen */
-  #page_margins {  }
-  #page{  }
-
-  /* Design of the Main Layout Elements | Gestaltung der Hauptelemente des Layouts */
-  #header {  }
-  #topnav {  }
-
-  #main {  }
-
-  #footer {  }
-
- /*------------------------------------------------------------------------------------------------------*/
-
- /**
-  * Formatting of the Content Area | Formatierung der Inhaltsbereichs
-  *
-  * @section layout-main
-  */
-
-  #col1 {  }
-  #col1_content {  }
-
-  #col2 {  }
-  #col2_content {  }
-
-  #col3 {  }
-  #col3_content {  }
-
-
- /*------------------------------------------------------------------------------------------------------*/
-
- /**
-  * Design of Additional Layout Elements | Gestaltung weiterer Layoutelemente
-  *
-  * @section layout-misc
-  */
-
-
+#fullheightcontainer {
+  position: relative; /*** Let's be nice to IE ***/
+  width: 100%; /*** Content Width ***/
+  display: table; /*** For non-IE browsers ***/
+  height: 100%;
+  margin-bottom: -30px; /*** NEGATIVE TOTAL Height of Footer Rows ***/
+  background: #FFFFCC; /*** Background colour of navigation column now ***/
 }
 
-@charset "UTF-8";
-/**
- * "Yet Another Multicolumn Layout" - (X)HTML/CSS Framework
- *
- * (en) Uniform design of standard content elements
- * (de) Einheitliche Standardformatierungen für die wichtigten Inhalts-Elemente
- *
- * @copyright       Copyright 2005-2008, Dirk Jesse
- * @license         CC-A 2.0 (http://creativecommons.org/licenses/by/2.0/),
- *                  YAML-C (http://www.yaml.de/en/license/license-conditions.html)
- * @link            http://www.yaml.de
- * @package         yaml
- * @version         3.0.6
- * @revision        $Revision: 202 $
- * @lastmodified    $Date: 2008-06-07 14:29:18 +0200 (Sa, 07 Jun 2008) $
- * @appdef yaml
- */
-
-@media all
-{
-  /**
-   * Fonts
-   * (en) font-family and font-size selection for headings and standard text elements
-   * (de) Zeichensatz und Schriftgrößen für Überschriften und übliche Text-Elemente
-   *
-   * @section content-fonts
-   */
-
-  /* (en) reset font size for all elements to standard (16 Pixel) */
-  /* (de) Alle Schriftgrößen auf Standardgröße (16 Pixel) zurücksetzen */
-  html * { font-size: 100.01%; }
-
-  /* (en) reset monospaced elements to font size 16px in Gecko browsers */
-  /* (de) Schriftgröße von monospaced Elemente auf 16 Pixel setzen */
-  textarea, pre, tt, code {
-	font-family:"Courier New", Courier, monospace;  	
-  }
-
-  /* (en) base layout gets standard font size 12px */
-  /* (de) Basis-Layout erhält Standardschriftgröße von 12 Pixeln */
-  body {
-    font-family: 'Trebuchet MS', Verdana, Helvetica, Arial, sans-serif;
-    font-size: 75.00%; 
-  }
-
-  h1,h2,h3,h4,h5,h6 { font-weight:bold; margin: 0 0 0.25em 0; }
-  h1 { font-size: 200% }                        /* 24px */
-  h2 { font-size: 166.67% }                     /* 20px */
-  h3 { font-size: 150% }                        /* 18px */
-  h4 { font-size: 133.33% }                     /* 16px */
-  h5 { font-size: 116.67% }                     /* 14px */
-  h6 { font-size: 116.67%; font-style:italic; } /* 14px */
-
-  p { line-height: 1.5em; margin: 0 0 1em 0; }
-
-  /* ### Lists | Listen  #### */
-
-  ul, ol, dl { line-height: 1.5em; margin: 0 0 1em 1em; }
-  li { margin-left: 1.5em; line-height: 1.5em; }
-
-  dt { font-weight: bold; }
-  dd { margin: 0 0 1em 2em; }
-
-  /* ### text formatting | Textauszeichnung ### */
-
-  cite, blockquote { font-style:italic; }
-  blockquote { margin: 0 0 1em 1.5em; }
-
-  strong,b { font-weight: bold; }
-  em,i { font-style:italic; }
-
-  pre, code { font-family: monospace; font-size: 1.1em; }
-
-  acronym, abbr {
-    letter-spacing: .07em;
-    border-bottom: .1em dashed #c00;
-    cursor: help;
-  }
-
-  /**
-   * Generic Content Classes
-   * (en) standard classes for positioning and highlighting
-   * (de) Standardklassen zur Positionierung und Hervorhebung
-   *
-   * @section content-generic-classes
-   */
-
-  .note { background: #dfd; padding: 1em; border-top: 1px #bdb dotted; border-bottom: 1px #bdb dotted; }
-  .important { background: #ffd; padding: 1em; border-top: 1px #ddb dotted; border-bottom: 1px #ddb dotted; }
-  .warning { background: #fdd; padding: 1em; border-top: 1px #dbb dotted; border-bottom: 1px #dbb dotted; }
-
-  .float_left { float: left; display:inline; margin-right: 1em; margin-bottom: 0.15em; }
-  .float_right { float: right; display:inline; margin-left: 1em; margin-bottom: 0.15em; }
-  .center { text-align:center; margin: 0.5em auto; }
-
-  /**
-   * External Links
-   *
-   * (en) Formatting of hyperlinks
-   * (de) Gestaltung von Hyperlinks
-   *
-   */
-
-  a { color: #900; text-decoration:none; }
-  a:focus,
-  a:hover,
-  a:active { background-color: #fee; text-decoration:underline; }
-  
-  #topnav a { color: #aac; font-weight: bold; background:transparent; text-decoration:none; }
-  #topnav a:focus,
-  #topnav a:hover,
-  #topnav a:active{ text-decoration:underline; background-color: transparent; }
-  
-  #footer a { color: #aac; background:transparent; font-weight: bold; }
-  #footer a:focus,
-  #footer a:hover,
-  #footer a:active { color: #fff; background-color: transparent; text-decoration:underline; }
-
-  /**
-   * (en) Emphasizing external Hyperlinks via CSS
-   * (de) Hervorhebung externer Hyperlinks mit CSS
-   *
-   * @section             content-external-links
-   * @app-yaml-default    disabled
-   */
-
-  /*
-  #main a[href^="http://www.my-domain.com"],
-  #main a[href^="https://www.my-domain.com"]
-  {
-    padding-left: 12px;
-    background-image: url('your_image.gif');
-    background-repeat: no-repeat;
-    background-position: 0 0.45em;
-  }
-  */
-
-  /**
-   * Tables | Tabellen
-   * (en) Generic classes for table-width and design definition
-   * (de) Generische Klassen für die Tabellenbreite und Gestaltungsvorschriften für Tabellen
-   *
-   * @section content-tables
-   */
-
-  table { width: auto; border-collapse:collapse; margin-bottom: 0.5em; }
-  table.full { width: 100%; }
-  table.fixed { table-layout:fixed; }
-
-  th,td { padding: 0.5em; }
-  thead th { background: #444; color: #fff; }
-  tbody th { background: #ccc; color: #333; }
-  tbody th.sub { background: #ddd; color: #333; }
-
-  /**
-   * Miscellaneous | Sonstiges
-   *
-   * @section content-misc
-   */
-
-  hr {
-    color: #fff;
-    background:transparent;
-    margin: 0 0 0.5em 0;
-    padding: 0 0 0.5em 0;
-    border:0;
-    border-bottom: 1px #000 solid;
-  }
+#wrapper {
+  display: table-cell; /*** For non-IE browsers ***/
+  position: relative; /*** Let's be nice to IE ***/
 }
 
+#outer {
+  position: relative;
+  margin-left: 200px; /*** Left Column Width ***/
+  background: #fff; /*** Background colour of content column ***/
+  height: 100%;
+}
+
+#float-wrap {
+  width: 100%;
+  float: left;
+  display: inline;
+}
+
+#clearheadercenter {
+  height: 40px; /*** TOTAL Height of Header Rows ***/
+  overflow: hidden;
+}
+
+#clearheaderleft {
+  height: 40px; /*** TOTAL Height of Header Rows ***/
+  overflow: hidden;
+}
+
+#clearheaderright {
+  height: 40px; /*** TOTAL Height of Header Rows ***/
+  overflow: hidden;
+}
+
+#clearfootercenter {
+  height: 30px; /*** TOTAL Height of Footer Rows ***/
+  overflow: hidden;
+}
+
+#clearfooterleft {
+  height: 30px; /*** TOTAL Height of Footer Rows ***/
+overflow: hidden;
+}
+
+#clearfooterright {
+  height: 30px; /*** TOTAL Height of Footer Rows ***/
+  overflow: hidden;
+}
+
+#center {
+  position: relative; /* fix for IE */
+  width: 100%;
+  float: right;
+  height: 100%;
+  display: table;
+}
+
+#left {
+  float: left;
+  display: inline;
+  width: 200px; /*** Left Column Width ***/
+  margin-left: -200px; /*** NEGATIVE Left Column Width ***/
+  position: relative;
+}
+
+
+
+#footer {
+  z-index: 1;
+  position: relative;
+  width: 100%;
+  height: 0;
+}
+
+#subfooter1 {
+  margin: 0;
+  background: red;
+  text-align: center;
+  height: 30px;
+  overflow: hidden;
+}
+
+#header {
+  z-index: 1;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 0;
+}
+
+#header-inner {
+  min-width: 770px; /*** Minimum Content Width ***/
+  height: 40px;
+    background: #00CCFF;
+}
+
+#header-right {
+        float:right;
+        margin:0;
+        margin-top:0.4em;
+        font-size:12px;
+}
+
+#center-right {
+		width: 50%;
+        float:right;
+        margin:0;
+        margin-top:0.4em;
+        font-size:12px;
+		background: #fff;
+		 float: right; 
+ display:inline; 
+ position: relative; 
+}
+#center-left {
+		width: 50%;
+        float:left;
+        margin:0;
+        margin-top:0.4em;
+        font-size:12px;
+		background: #fff;
+		 float: right; 
+ display:inline; 
+ position: relative; 
+}
+
+#centerfill, #leftfill {display: none;}
+
+
+
+ 
+td  {
+	font-size : 14px;
+}
+ 
+A {
+TEXT-DECORATION: none;
+	color: #369
+}
+ 
+A:hover {
+	BACKGROUND-COLOR: #039; COLOR: #fff; TEXT-DECORATION: none
+}
+ 
+a:visited {  color: #000000}
+input  {
+	font-size : 14px;
+}
+ 
+select  {
+	font-size : 14px;
+}
+ 
+h2  {
+	font-weight : bold;
+	font-size : 12pt;
+}
+ 
+h4  {
+	font-size : 10pt;
+	font-weight : bold;
+}
+img {
+border: none;
+}
+.button_link a {
+border-top: 1px solid #E8E8E8;
+border-left: 1px solid #E8E8E8;
+border-right: 1px solid #959595;
+border-bottom: 1px solid #959595;
+padding: 6px 12px;
+background-color: #D6D6D6
+color: #000000;
+}
+ 
+/*subject list*/
+.obs{ margin: 5px 0 10px 0; float: left; text-align: center; overflow: hidden; width: 105px; }
+.obs dt{ height: 100px; width: 105px; overflow: hidden; }
+.obs dd{ margin: 0; height: 25px; overflow: hidden; }
+ 
+/*user list*/
+.obu{ margin: 5px 0 10px 0; width: 80px; float: left; text-align: center; overflow: hidden;}
+.obu dt{ margin: 0; height: 50px; overflow: hidden; }
+.obu dd{ margin: 0px; height: 50px; text-align: center; overflow: hidden; }
